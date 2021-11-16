@@ -1,0 +1,8 @@
+#+TITLE: consult-emms.el
+#+AUTHOR: Hugo Heagren
+
+Consult-based interface to EMMS, the Emacs MultiMedia System.
+
+Provides (or will provide, when they're written), two entry point commands:
+- ~consult-emms-library~ :: add elements of the EMMS library (a track, an artist, an album, etc.) to the current playlist.
+- ~consult-emms-playlist~ :: manipulate the current playlist. Mostly useful with embark (package for such integration forthcoming...). Configurable default action.
