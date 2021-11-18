@@ -16,7 +16,8 @@
 ;;;; Sources
 
 (defcustom consult-emms-library-sources '(consult-emms--source-track
-					  consult-emms--source-album)
+					  consult-emms--source-album
+					  consult-emms--source-artist)
   "Sources used by `consult-emms-library'.
 
 See `consult--multi' for a description of the source values. The
@@ -116,6 +117,62 @@ cache was rebuilt or not, return a list of keys for
     :action   consult-emms--add-album
     :cache t)
   "Album source for `consult-emms-library'.")
+
+;;;;; Artists
+
+(defvar consult-emms--artist-cache (make-hash-table :test #'equal)
+  "Hash table caching artists for `consult-emms--source-artist'.")
+
+(defun consult-emms--artist-cache-reset ()
+  "Populate `consult-emms--artist-cache'.
+
+Each key is an artist name (as a string), each value is a list of
+keys in `emms-cache-db' for the tracks by that artist. Returns the
+list of artist names."
+  (let ((artists '()))
+    (maphash
+     (lambda (key value) (if-let ((artist (assoc-default 'info-artist value nil nil)))
+			(progn (puthash artist
+					(append (list key) (gethash artist consult-emms--artist-cache))
+					consult-emms--artist-cache)
+			       (setq artists (append (list artist) artists)))))
+     emms-cache-db)
+    (delete-dups artists)))
+
+(defun consult-emms--get-artists ()
+  "Return a list of artists in `emms-cache-db'.
+
+Specifically, if caching is disabled for
+`consult-emms--source-artist', or `consult-emms--artist-cache' is
+empty and `emms-cache-db' is not empty, then rebuild the cache
+with `consult-emms--artist-cache-reset'. (The second situation
+covers the first invocation in a new session.) Then whether the
+cache was rebuilt or not, return a list of keys for
+`consult-emms--artist-cache'."
+  (or (when (or (not (plist-get consult-emms--source-artist :cache)) ;; Caching disabled
+		(and (not (hash-table-empty-p emms-cache-db)) ;; the emms cache is non-empty and...
+			  (hash-table-empty-p consult-emms--artist-cache))) ;; ...the cache var is empty
+	(consult-emms--artist-cache-reset)) ;; Update the cache (this returns the new list of keys)
+      ;; Don't need to update, just return the keys
+      (hash-table-keys consult-emms--artist-cache)))
+
+(defun consult-emms--add-artist (artist)
+  (mapcar (lambda (trk)
+	    (emms-add-file (assoc-default 'name (gethash trk emms-cache-db) nil nil)))
+	  (gethash artist consult-emms--artist-cache)))
+
+(defvar consult-emms--artist-history nil
+  "History of `consult-emms--source-artist'.")
+
+(defvar consult-emms--source-artist
+  '(:name     "Artist"
+    :narrow   ?a
+    :category artist
+    :history  consult-emms--artist-history
+    :items    consult-emms--get-artists
+    :action   consult-emms--add-artist
+    :cache t)
+  "Artist source for `consult-emms-library'.")
 
 ;;;; Entry Points
 
