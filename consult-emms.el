@@ -9,6 +9,7 @@
 
 (require 'consult)
 (require 'emms)
+(require 'cl-lib)
 
 (defgroup consult-emms nil
   "Customization group for consult-emms.")
@@ -27,6 +28,58 @@ complex operations on many candidates (like for albums)."
   :group 'consult-emms
   :type '(repeat symbol))
 
+(cl-defmacro consult-emms--def-library-source (base &rest keys
+						    &key items action
+						    &allow-other-keys)
+  "Define a source for `consult-emms-library'.
+
+Given BASE, create a two variables:
+consult-emms--BASE-history (initialised as nil) and
+consult-emms--source-BASE. The latter is a plist with the
+following keys and values:
+
+- :name - capitalised version of string of BASE.
+- :category - BASE.
+- :history - symbol of the above history variable.
+- :items - ITEMS (required), handled by `consult--multi'.
+- :action - ACTION (required), handled by `consult--multi'.
+- :cache - whether to do caching. Defaults to t. Decision is made with
+  `if', so any non-nil value means to do caching.
+
+All keys set automatically (e.g. :history) can be overridden by
+passing the key as an argument directly.
+
+Any other keys passed (e.g. :narrow) will be included in
+consult-emms--source-BASE, which is passed as a source to
+`consult--multi', which see."
+  ;; Requirements
+  (unless items  (error "Items not specified."))
+  (unless action (error "Action not specified."))
+  (let* ((name-string (symbol-name base))
+	 (src-var-name (intern (concat "consult-emms--source-" name-string)))
+	 (hist-var-name (intern (concat "consult-emms--" name-string "-history")))
+	 (def-prop-list (list
+		     :name (capitalize name-string)
+    		     :category base
+    		     :history hist-var-name
+    		     :items items
+    		     :action action
+    		     :cache t)))
+    (list 'progn
+	  ;; Def history variable
+	  `(defvar ,hist-var-name nil
+	     ,(concat "History of `" (symbol-name src-var-name) "'."))
+	  ;; Create correct options list. Anything specified in the
+	  ;; call takes precedence, default to values in above list.
+	  (cl-loop for (prop val) on def-prop-list by 'cddr
+		   do (unless (plist-member keys prop)
+			(plist-put keys prop val)))
+	  ;; Def source variable
+	  `(defvar ,src-var-name
+	     (quote ,keys)
+	     ;; Docstring
+	     ,(concat (capitalize name-string) " source for `consult-emms-library'.")))))
+
 ;;;;; Tracks
 
 (defun consult-emms--get-tracks ()
@@ -44,17 +97,10 @@ value. The name defaults to \"unknown\" if it is not found."
 	     'consult-emms--hash-key key))
 	  (hash-table-keys emms-cache-db)))
 
-(defvar consult-emms--track-history ()
-  "History of `consult-emms--source-track'.")
-
-(defvar consult-emms--source-track
-  `(:name     "Track"
-    :narrow   ?t
-    :category track
-    :history  consult-emms--track-history
-    :items    ,#'consult-emms--get-tracks
-    :action   (lambda (trk-str) (emms-add-file (get-text-property 0 'consult-emms--hash-key trk-str))))
-  "Track source for `consult-emms-library'.")
+(consult-emms--def-library-source track
+				  :items    consult-emms--get-tracks
+				  :action   (lambda (trk-str) (emms-add-file (get-text-property 0 'consult-emms--hash-key trk-str)))
+				  :narrow   ?t)
 
 ;;;;; Albums
 
@@ -105,18 +151,10 @@ cache was rebuilt or not, return a list of keys for
 	  (sort (gethash album consult-emms--album-cache)
 		'consult-emms--compare-track-numbers)))
 
-(defvar consult-emms--album-history nil
-  "History of `consult-emms--source-album'.")
-
-(defvar consult-emms--source-album
-  '(:name     "Album"
-    :narrow   ?b
-    :category album
-    :history  consult-emms--album-history
-    :items    consult-emms--get-albums
-    :action   consult-emms--add-album
-    :cache t)
-  "Album source for `consult-emms-library'.")
+(consult-emms--def-library-source album
+				  :narrow ?b
+				  :items  consult-emms--get-albums
+				  :action consult-emms--add-album)
 
 ;;;;; Artists
 
@@ -161,18 +199,10 @@ cache was rebuilt or not, return a list of keys for
 	    (emms-add-file (assoc-default 'name (gethash trk emms-cache-db) nil nil)))
 	  (gethash artist consult-emms--artist-cache)))
 
-(defvar consult-emms--artist-history nil
-  "History of `consult-emms--source-artist'.")
-
-(defvar consult-emms--source-artist
-  '(:name     "Artist"
-    :narrow   ?a
-    :category artist
-    :history  consult-emms--artist-history
-    :items    consult-emms--get-artists
-    :action   consult-emms--add-artist
-    :cache t)
-  "Artist source for `consult-emms-library'.")
+(consult-emms--def-library-source artist
+				  :narrow ?a
+				  :items  consult-emms--get-artists
+				  :action consult-emms--add-artist)
 
 ;;;; Entry Points
 
