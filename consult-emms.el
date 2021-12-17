@@ -204,6 +204,49 @@ cache was rebuilt or not, return a list of keys for
 				  :items  consult-emms--get-artists
 				  :action consult-emms--add-artist)
 
+;;;;; Streams
+
+(defvar consult-emms--stream-cache (make-hash-table :test #'equal)
+  "Hash table caching streams for `consult-emms--source-stream'.")
+
+(defun consult-emms--get-streams ()
+  "Get list of EMMS tracks from ‘emms-cache-db’.
+
+For each track, return a string with the stream's name. This has
+a property `consult-emms--stream-url' with the stream's url as
+its value. The name defaults to \"unknown\" if it is not found."
+  (let* ((file-streams-list (with-temp-buffer
+			      (emms-insert-file-contents emms-streams-file)
+			      (goto-char (point-min))
+			      (when (not (emms-source-playlist-native-p))
+				(error "Cannot parse `emms-streams-file.'"))
+			      (emms-source-playlist-parse-native nil)))
+	 (streams (delete-dups (append file-streams-list
+				       emms-streams-built-in-list))))
+    ;; Map over the list of streams. For each:
+    ;; - first item of metadata is the name
+    ;; - second item of metadata is the url
+    ;; - set key=name,value=url in the cache map
+    (mapcar (lambda (stream)
+	      (if-let* ((md (assoc-default 'metadata stream nil nil))
+			(name (or (car md) "unknown"))
+			(url (cadr md)))
+		  (propertize name 'consult-emms--stream-url url)))
+	    streams)))
+
+(defun consult-emms--add-stream (stream)
+  "Insert STREAM into the current EMMS buffer, and play it."
+  (emms-add-streamlist
+   (get-text-property 0 'consult-emms--stream-url stream))
+  (with-current-emms-playlist
+    (emms-playlist-last)
+    (emms-playlist-mode-play-smart)))
+
+(consult-emms--def-library-source stream
+				  :narrow ?s
+				  :items  consult-emms--get-streams
+				  :action consult-emms--add-stream)
+
 ;;;; Entry Points
 
 ;;;###autoload
