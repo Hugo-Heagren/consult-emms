@@ -140,10 +140,24 @@ cache was rebuilt or not, return a list of keys for
       ;; Don't need to update, just return the keys
       (hash-table-keys consult-emms--album-cache)))
 
+(defun consult-emms--guess-track-number (track)
+  "Guess the track number of TRACK.
+
+If TRACK includes `info-tracknumber' metadata, return that as an
+integer. Otherwise Attempt to parse an integer from the beginning
+of it's `name' metadata. If neither of these succeeds, return
+nil."
+  (string-to-number
+   (or
+    (assoc-default 'info-tracknumber track nil nil)
+    (file-name-base (assoc-default 'name track nil nil)))))
+
 (defun consult-emms--compare-track-numbers (a b)
-  "Return t if track with key A has a lower tracknumber than B."
-  (< (string-to-number (assoc-default 'info-tracknumber (gethash a emms-cache-db) nil nil))
-     (string-to-number (assoc-default 'info-tracknumber (gethash b emms-cache-db) nil nil))))
+  "Return t if track with key A has a lower tracknumber than B.
+
+Tracknumbers are fetched with `consult-emms--guess-track-number'."
+  (< (consult-emms--guess-track-number (gethash a emms-cache-db))
+     (consult-emms--guess-track-number (gethash b emms-cache-db))))
 
 (defun consult-emms--add-album (album)
   (mapcar (lambda (trk)
