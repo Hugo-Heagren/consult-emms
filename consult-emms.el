@@ -263,13 +263,16 @@ its value. The name defaults to \"unknown\" if it is not found."
 
 ;;;; Entry Points
 
+(defvar consult--emms-library-history nil
+  "History of `consult--emms-library-history'.")
+
 ;;;###autoload
 (defun consult-emms-library ()
   (interactive)
   (consult--multi consult-emms-library-sources
                  :require-match t
                  :prompt "EMMS Library: "
-                 :history 'consult--buffer-history))
+                 :history 'consult--emms-library-history))
 
 (provide 'consult-emms)
 
