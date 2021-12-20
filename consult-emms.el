@@ -261,6 +261,37 @@ its value. The name defaults to \"unknown\" if it is not found."
 				  :items  consult-emms--get-streams
 				  :action consult-emms--add-stream)
 
+;;;; Playlists
+
+(defun consult-emms--get-tracks-playlist-buffer (buffer)
+  "Get a list of tracks in an EMMS BUFFER.
+
+Returns a list of strings, each the title of a track. Each string
+has two properties. The value of `consult-emms-track-key' is the
+hash key of the relevant track in `emms-cache-db'. The value of
+`consult-emms-track-pos' is the char position in at the beginning
+of the tracks's line in BUFFER."
+   (with-current-buffer buffer
+     (save-excursion
+       (cl-loop initially do (goto-char (point-min))
+		until (eobp)
+		if (emms-playlist-track-at)
+		collect (let* ((trk (emms-playlist-track-at))
+			       (title (emms-track-get trk 'info-title))
+			       (key (emms-track-get trk 'name)))
+			  (propertize title
+				      'consult-emms-track-key key
+				      'consult-emms-track-pos (point)))
+		and
+		do (forward-line)
+		end))))
+
+(defun consult-emms--play-track-by-pos (buffer pos)
+  "Play track at POS in emms playlist buffer BUFFER."
+  (with-current-buffer buffer
+    (goto-char pos)
+    (emms-playlist-mode-play-current-track)))
+
 ;;;; Entry Points
 
 (defvar consult--emms-library-history nil
