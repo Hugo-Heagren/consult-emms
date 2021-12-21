@@ -334,6 +334,19 @@ of the tracks's line in BUFFER."
 	 (track (apply 'consult--read `(,items ,@read-args))))
     (consult-emms--play-track-by-pos buffer track)))
 
+(defun consult-emms--choose-buffer ()
+  "Choose one of the currently open EMMS playlists.
+
+Returns the buffer object. The list if fetched with
+`emms-metaplaylist-mode-sorted-buffer-list'."
+  (let* ((playlist-list (mapcar (lambda (buffer) `(,(string-trim (buffer-name buffer)) . ,buffer))
+				(emms-metaplaylist-mode-sorted-buffer-list))))
+	 (consult--read playlist-list
+			:prompt "EMMS Playlist: "
+			:require-match t
+			:lookup #'consult--lookup-cdr
+			:sort nil)))
+
 ;;;; Entry Points
 
 ;;;###autoload
