@@ -292,7 +292,17 @@ of the tracks's line in BUFFER."
     (goto-char pos)
     (emms-playlist-mode-play-current-track)))
 
-;;;; Entry Points
+(defun consult-emms--playlist-source-from-buffer (buffer)
+  "Make a source for `consult-emms-playlists' from BUFFER."
+  (let* ((name (buffer-name buffer))
+	 (hist-sym (intern (concat "consult-emms--" name "-buffer-history"))))
+    `(:items ,(consult-emms--get-tracks-playlist-buffer buffer)
+      :category track
+      :name ,name
+      :sort nil
+      :action (lambda (str) (consult-emms--play-track-by-pos
+			       ,buffer (get-text-property 0 'consult-emms-track-pos str))))))
+
 
 ;;;; Entry Points
 
@@ -302,6 +312,16 @@ of the tracks's line in BUFFER."
   (consult--multi consult-emms-library-sources
                  :require-match t
                  :prompt "EMMS Library: "))
+
+;;;###autoload
+(defun consult-emms-playlists ()
+  "Select a track from an EMMS buffer. Each buffer is a category."
+  (interactive)
+  (let ((playlists (mapcar 'consult-emms--playlist-source-from-buffer
+			 (emms-metaplaylist-mode-sorted-buffer-list))))
+    (consult--multi playlists
+		    :require-match t
+		    :prompt "Track: ")))
 
 (provide 'consult-emms)
 
