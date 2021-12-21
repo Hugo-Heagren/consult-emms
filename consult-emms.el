@@ -356,6 +356,7 @@ Returns the buffer object. The list if fetched with
 	 (consult--read playlist-list
 			:prompt "EMMS Playlist: "
 			:require-match t
+			:default (buffer-name emms-playlist-buffer)
 			:lookup #'consult--lookup-cdr
 			:sort nil)))
 
