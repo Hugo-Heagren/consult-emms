@@ -14,6 +14,18 @@
 (defgroup consult-emms nil
   "Customization group for consult-emms.")
 
+;;;; Utils
+
+(defun consult-emms--gen-history-var-name (thing)
+  "Generate the name of a history variable for THING.
+
+This will have the form `consult-emms--THING-history', returned
+as a symbol. THINGS can be a string or a symbol."
+  (intern (format "consult-emms--%s-history"
+		  (if (symbolp thing)
+		      (symbol-name thing)
+		    thing))))
+
 ;;;; Sources
 
 (defcustom consult-emms-library-sources '(consult-emms--source-track
