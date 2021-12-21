@@ -369,6 +369,9 @@ Returns the buffer object. The list if fetched with
                  :require-match t
                  :prompt "EMMS Library: "))
 
+(defvar consult-emms--playlists-history nil
+  "History of `consult-emms-playlists'.")
+
 ;;;###autoload
 (defun consult-emms-playlists ()
   "Select a track from an EMMS buffer. Each buffer is a category."
@@ -377,7 +380,8 @@ Returns the buffer object. The list if fetched with
 			 (emms-metaplaylist-mode-sorted-buffer-list))))
     (consult--multi playlists
 		    :require-match t
-		    :prompt "Track: ")))
+		    :prompt "Track: "
+		    :history 'consult-emms--playlists-history)))
 
 ;;;###autoload
 (defun consult-emms-metaplaylist ()
