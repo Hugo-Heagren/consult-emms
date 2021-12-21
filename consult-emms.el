@@ -303,6 +303,11 @@ of the tracks's line in BUFFER."
       :action (lambda (str) (consult-emms--play-track-by-pos
 			       ,buffer (get-text-property 0 'consult-emms-track-pos str))))))
 
+(defun consult-emms--lookup-playlist-pos (_ candidates cand)
+  "Lookup CAND in CANDIDATES list and return property 'consult--candidate."
+  (when-let (found (member cand candidates))
+    (get-text-property 0 'consult-emms-track-pos (car found))))
+
 
 ;;;; Entry Points
 
