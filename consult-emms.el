@@ -353,6 +353,12 @@ of the tracks's line in BUFFER."
 		    :require-match t
 		    :prompt "Track: ")))
 
+;;;###autoload
+(defun consult-emms-current-playlist ()
+  "Select a track from the current EMMS playlist."
+  (interactive)
+  (consult-emms--playlist emms-playlist-buffer))
+
 (provide 'consult-emms)
 
 ;;; consult-emms.el ends here
