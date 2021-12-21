@@ -294,16 +294,14 @@ of the tracks's line in BUFFER."
 
 ;;;; Entry Points
 
-(defvar consult--emms-library-history nil
-  "History of `consult--emms-library-history'.")
+;;;; Entry Points
 
 ;;;###autoload
 (defun consult-emms-library ()
   (interactive)
   (consult--multi consult-emms-library-sources
                  :require-match t
-                 :prompt "EMMS Library: "
-                 :history 'consult--emms-library-history))
+                 :prompt "EMMS Library: "))
 
 (provide 'consult-emms)
 
