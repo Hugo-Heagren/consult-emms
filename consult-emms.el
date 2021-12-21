@@ -367,6 +367,13 @@ Returns the buffer object. The list if fetched with
 		    :prompt "Track: ")))
 
 ;;;###autoload
+(defun consult-emms-metaplaylist ()
+  "Choose an EMMS playlist to interact with."
+  (interactive)
+  (let ((buffer (consult-emms--choose-buffer)))
+    (consult-emms--playlist buffer)))
+
+;;;###autoload
 (defun consult-emms-current-playlist ()
   "Select a track from the current EMMS playlist."
   (interactive)
