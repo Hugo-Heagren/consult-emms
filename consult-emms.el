@@ -308,6 +308,31 @@ of the tracks's line in BUFFER."
   (when-let (found (member cand candidates))
     (get-text-property 0 'consult-emms-track-pos (car found))))
 
+(defun consult-emms--playlist (buffer)
+  "Select a track from EMMS buffer BUFFER."
+  ;; `consult-emms--playlist-source-from-buffer' does most of the work
+  ;; of forming the args for us, and it's a good idea to avoid code
+  ;; duplication, so we use it here. BUT, it forms a source for
+  ;; `consult--multi', which is different from the arg list taken by
+  ;; `consult--read', so we have to transform it a bit.
+  (let* ((raw-args (consult-emms--playlist-source-from-buffer buffer))
+	 (items (plist-get raw-args :items))
+	 ;; TODO Get this list programatically
+	 (allowed '(:prompt :predicate :require-match ;; Keywords in `consult--read'
+		    :history :default :keymap
+		    :category :initial :narrow
+		    :add-history :annotate :state
+		    :preview-key :sort :lookup
+		    :group :inherit-input-method))
+	 ;; Use only arg keys used by `consult--read'
+	 (filtered-args (cl-loop for (key value) on raw-args by 'cddr
+				 if (member key allowed)
+				 collect key and collect value))
+	 (read-args (append `(:prompt ,(format "EMMS playlist <%s>: " (string-trim (buffer-name buffer)))
+			      :lookup consult-emms--lookup-playlist-pos)
+			    filtered-args))
+	 (track (apply 'consult--read `(,items ,@read-args))))
+    (consult-emms--play-track-by-pos buffer track)))
 
 ;;;; Entry Points
 
