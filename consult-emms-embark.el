@@ -14,9 +14,7 @@
 
 (defun consult-emms-embark--add-track-playlist (track-name)
   "Choose an EMMS playlist to add track TRACK-NAME to."
-  (let* ((key (get-text-property 0 'consult-emms-track-key track-name))
-	 (track (gethash key emms-cache-db))
-	 (file (assoc-default 'name track nil nil))
+  (let ((file (consult-emms--track-name-get track-name 'name))
 	 (emms-playlist-buffer (consult-emms--choose-buffer)))
     (emms-add-file file)))
 
