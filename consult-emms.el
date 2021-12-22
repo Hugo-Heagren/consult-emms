@@ -121,7 +121,7 @@ value. The name defaults to \"unknown\" if it is not found."
 
 (consult-emms--def-library-source track
 				  :items    consult-emms--get-tracks
-				  :action   (lambda (trk-str) (emms-add-file (get-text-property 0 'consult-emms-track-key trk-str)))
+				  :action   (lambda (trk-str) (emms-add-file (consult-emms--track-name-get trk-str 'name)))
 				  :narrow   ?t)
 
 ;;;;; Albums
