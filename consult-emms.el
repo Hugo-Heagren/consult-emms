@@ -119,9 +119,16 @@ value. The name defaults to \"unknown\" if it is not found."
 	     'consult-emms-track-key key))
 	  (hash-table-keys emms-cache-db)))
 
+(defun consult-emms--add-track-current-playlist (track-name)
+  "Add track TRACK-NAME to current playlist.
+
+TRACK-NAME should be a propertized string, from which a key in
+`emms-cache-db' can be extracted."
+  (emms-add-file (consult-emms--track-name-get track-name 'name)))
+
 (consult-emms--def-library-source track
 				  :items    consult-emms--get-tracks
-				  :action   (lambda (trk-str) (emms-add-file (consult-emms--track-name-get trk-str 'name)))
+				  :action   #'consult-emms--add-track-current-playlist
 				  :narrow   ?t)
 
 ;;;;; Albums
