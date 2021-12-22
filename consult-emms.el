@@ -26,6 +26,16 @@ as a symbol. THINGS can be a string or a symbol."
 		      (symbol-name thing)
 		    thing))))
 
+(defun consult-emms--track-name-get (track-name name &optional default)
+  "Return the value of NAME property of track TRACK-NAME.
+
+TRACK-NAME should be a string with the property
+consult-emms-track-key. If DEFAULT is non-nil and the track does
+not specify NAME, return DEFAULT."
+  (let* ((key (get-text-property 0 'consult-emms-track-key track-name))
+	 (track (gethash key emms-cache-db)))
+    (assoc-default name track nil default)))
+
 ;;;; Sources
 
 (defcustom consult-emms-library-sources '(consult-emms--source-track
