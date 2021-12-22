@@ -4,6 +4,14 @@
 Consult-based interface to EMMS, the Emacs MultiMedia System.
 
 * Entry points
+Unlike other packages, this package provides no keybindings, and none
+of these entry points take prefix arguments to alter their behaviour
+in relation to one another. This is intentional: users are meant to
+design their own workflows and wrapper commands over these entry
+points in a way that suits them. These four commands will probably
+cover most /functionality/ most people will want, but exactly how you
+use it is up to you.
+
 ** ~consult-emms-library~
 Add elements of the EMMS library (a track, an artist, an album, etc.) to the current playlist.
 
@@ -19,9 +27,15 @@ Annotations for each element (e.g. track length, number of tracks in an album et
 ** ~consult-emms-current-playlist~
 Jump to selected track in the current playlist.
 
-** ~consult-emms-playlists~ (not yet implemented)
-Like ~consult-emms-current-playlist~, but presents /all/ currently open EMMS playlists each as a separate source.
+** ~consult-emms-metaplaylist~
+An analogue of ~emms-metaplaylist-mode~.
+Choose an EMMS playlist buffer from all the currently open ones.
+The chosen playlist is then presented in the minbuffer for you to select a track from, just like with consult-emms-current-playlist~.
+(In fact, selecting the current playlist from ~consult-emms-metaplaylist~ is functionally identical to running ~consult-emms-metaplaylist~.)
+
+** ~consult-emms-playlists~
 Jump to any track in any playlist.
+Like ~consult-emms-current-playlist~, but presents /all/ currently open EMMS playlists, each as a separate source/category.
 
 * Embark Integration (not yet implemented)
 There will be a distinct package (though kept in the same repo) for embark integration.
