@@ -98,7 +98,7 @@ consult-emms--source-BASE, which is passed as a source to
   "Get list of EMMS tracks from `emms-cache-db'.
 
 For each track, return a string with the track's name. This has a
-property consult-emms--hash-key, with the track's hash key as its
+property consult-emms-track-key, with the track's hash key as its
 value. The name defaults to \"unknown\" if it is not found."
   (mapcar (lambda (key)
 	    (propertize
@@ -106,12 +106,12 @@ value. The name defaults to \"unknown\" if it is not found."
 		  'info-title
 		  (gethash key emms-cache-db))
 		 "unknown")
-	     'consult-emms--hash-key key))
+	     'consult-emms-track-key key))
 	  (hash-table-keys emms-cache-db)))
 
 (consult-emms--def-library-source track
 				  :items    consult-emms--get-tracks
-				  :action   (lambda (trk-str) (emms-add-file (get-text-property 0 'consult-emms--hash-key trk-str)))
+				  :action   (lambda (trk-str) (emms-add-file (get-text-property 0 'consult-emms-track-key trk-str)))
 				  :narrow   ?t)
 
 ;;;;; Albums
@@ -239,7 +239,7 @@ cache was rebuilt or not, return a list of keys for
   "Get list of EMMS tracks from ‘emms-cache-db’.
 
 For each track, return a string with the stream's name. This has
-a property `consult-emms--stream-url' with the stream's url as
+a property `consult-emms-stream-url' with the stream's url as
 its value. The name defaults to \"unknown\" if it is not found."
   (let* ((file-streams-list (with-temp-buffer
 			      (emms-insert-file-contents emms-streams-file)
@@ -257,13 +257,13 @@ its value. The name defaults to \"unknown\" if it is not found."
 	      (if-let* ((md (assoc-default 'metadata stream nil nil))
 			(name (or (car md) "unknown"))
 			(url (cadr md)))
-		  (propertize name 'consult-emms--stream-url url)))
+		  (propertize name 'consult-emms-stream-url url)))
 	    streams)))
 
 (defun consult-emms--add-stream (stream)
   "Insert STREAM into the current EMMS buffer, and play it."
   (emms-add-streamlist
-   (get-text-property 0 'consult-emms--stream-url stream))
+   (get-text-property 0 'consult-emms-stream-url stream))
   (with-current-emms-playlist
     (emms-playlist-last)
     (emms-playlist-mode-play-smart)))
