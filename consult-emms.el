@@ -253,10 +253,16 @@ cache was rebuilt or not, return a list of keys for
       ;; Don't need to update, just return the keys
       (hash-table-keys consult-emms--artist-cache)))
 
+(defun consult-emms--get-artist-tracks (artist)
+  "Return tracks in ARTIST, a key in `consult-emms--artist-cache'.
+
+Returns a list of keys in `emms-cache-db'."
+  (gethash artist consult-emms--artist-cache))
+
 (defun consult-emms--add-artist (artist)
   (mapcar (lambda (trk)
 	    (emms-add-file (assoc-default 'name (gethash trk emms-cache-db) nil nil)))
-	  (gethash artist consult-emms--artist-cache)))
+	  (consult-emms--get-artist-tracks artist)))
 
 (consult-emms--def-library-source artist
 				  :narrow ?a
