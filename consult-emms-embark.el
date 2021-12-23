@@ -42,11 +42,18 @@ Selected track is added to the current playlist."
 			       :category 'track)))
     (consult-emms--add-track-current-playlist track)))
 
+(defun consult-emms-embark--edit-track-tags (track-name)
+  "Edit TRACK-NAME's tags in EMMS' tag editor."
+  (let* ((key (get-text-property 0 'consult-emms-track-key track-name))
+	 (track (gethash key emms-cache-db)))
+    (emms-tag-editor-edit-track track)))
+
 (embark-define-keymap consult-emms-embark-track-actions
   "Keymap for actions on tracks in `consult-emms'."
   ("p" '("Add to playlist" . consult-emms-embark--add-track-playlist))
   ("b" '("Goto album" . consult-emms-embark--track-goto-album))
-  ("a" '("Goto artist" . consult-emms-embark--track-goto-artist)))
+  ("a" '("Goto artist" . consult-emms-embark--track-goto-artist))
+  ("e" '("Edit tags" . consult-emms-embark--edit-track-tags)))
 
 (add-to-list 'embark-keymap-alist '(track . consult-emms-embark-track-actions))
 
