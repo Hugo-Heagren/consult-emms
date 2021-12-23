@@ -11,6 +11,8 @@
 (require 'emms)
 (require 'cl-lib)
 
+;;;; Variables
+
 (defgroup consult-emms nil
   "Customization group for consult-emms.")
 
