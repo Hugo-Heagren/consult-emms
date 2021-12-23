@@ -18,9 +18,22 @@
 	 (emms-playlist-buffer (consult-emms--choose-buffer)))
     (emms-add-file file)))
 
+(defun consult-emms-embark--track-goto-album (track-name)
+  "Select a track from the album to which TRACK-NAME belongs.
+
+Selected track is added to the current playlist."
+  (let* ((album (consult-emms--track-name-get track-name 'info-album))
+	 (tracks (mapcar #'consult-emms--propertize-track-title
+			 (consult-emms--get-album-tracks album)))
+	 (track (consult--read tracks
+			       :prompt (format "%s: " album)
+			       :category 'track)))
+    (consult-emms--add-track-current-playlist track)))
+
 (embark-define-keymap consult-emms-embark-track-actions
   "Keymap for actions on tracks in `consult-emms'."
-  ("p" '("Add to playlist" . consult-emms-embark--add-track-playlist)))
+  ("p" '("Add to playlist" . consult-emms-embark--add-track-playlist))
+  ("b" '("Goto album" . consult-emms-embark--track-goto-album)))
 
 (add-to-list 'embark-keymap-alist '(track . consult-emms-embark-track-actions))
 
