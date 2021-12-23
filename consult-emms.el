@@ -188,11 +188,19 @@ Tracknumbers are fetched with `consult-emms--guess-track-number'."
   (< (consult-emms--guess-track-number (gethash a emms-cache-db))
      (consult-emms--guess-track-number (gethash b emms-cache-db))))
 
+(defun consult-emms--get-album-tracks (album)
+  "Return tracks in ALBUM, a key in `consult-emms--album-cache'.
+
+Returns a list of keys in `emms-cache-db'. These are sorted by
+their track number, compared with
+`consult-emms--compare-track-numbers'."
+  (sort (gethash album consult-emms--album-cache)
+	'consult-emms--compare-track-numbers))
+
 (defun consult-emms--add-album (album)
   (mapcar (lambda (trk)
 	    (emms-add-file (assoc-default 'name (gethash trk emms-cache-db) nil nil)))
-	  (sort (gethash album consult-emms--album-cache)
-		'consult-emms--compare-track-numbers)))
+	  (consult-emms--get-album-tracks album)))
 
 (consult-emms--def-library-source album
 				  :narrow ?b
