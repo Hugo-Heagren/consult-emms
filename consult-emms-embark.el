@@ -52,6 +52,29 @@ Selected track is added to the current playlist."
 
 (add-to-list 'embark-keymap-alist '(track . consult-emms-embark-track-actions))
 
+;;;; Albums
+
+(defun consult-emms-embark--album-goto-artist (album)
+  "Select a track by ALBUM's artist.
+
+Selected track is added to the current playlist."
+  ;; All the tracks will have the same album-artist, so we just check
+  ;; the first one
+  (let* ((any-track (car (consult-emms--get-album-tracks album)))
+	 ;; If there is an explicit 'albumartist' tag, use that. If
+	 ;; not (lots of files are not very well tagged), default to
+	 ;; the artist of the song.
+	 (artist (or
+		  (emms-track-get (gethash any-track emms-cache-db) 'info-albumartist)
+		  (emms-track-get (gethash any-track emms-cache-db) 'info-artist))))
+    (consult-emms--choose-track-artist artist)))
+
+(embark-define-keymap consult-emms-embark-album-actions
+  "Keymap for actions on albums in `consult-emms'."
+  ("a" '("Goto artist" . consult-emms-embark--album-goto-artist)))
+
+(add-to-list 'embark-keymap-alist '(album . consult-emms-embark-album-actions))
+
 (provide 'consult-emms-embark)
 
 ;;; consult-emms-embark.el ends here
