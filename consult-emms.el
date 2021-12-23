@@ -104,19 +104,27 @@ consult-emms--source-BASE, which is passed as a source to
 
 ;;;;; Tracks
 
+(defun consult-emms--propertize-track-title (track-key)
+  "Return the title of TRACK-KEY's track, propertized with TRACK-KEY.
+
+TRACK-KEY is a key in `emms-cache-db'. Returns the title of the
+track that key points to (or \"unknown\" if the title can't be
+retrieved), with TRACK-KEY as the value of a property
+consult-emms-track-key."
+  (propertize
+   (or (assoc-default
+	'info-title
+	(gethash track-key emms-cache-db))
+       "unknown")
+   'consult-emms-track-key track-key))
+
 (defun consult-emms--get-tracks ()
   "Get list of EMMS tracks from `emms-cache-db'.
 
 For each track, return a string with the track's name. This has a
 property consult-emms-track-key, with the track's hash key as its
 value. The name defaults to \"unknown\" if it is not found."
-  (mapcar (lambda (key)
-	    (propertize
-	     (or (assoc-default
-		  'info-title
-		  (gethash key emms-cache-db))
-		 "unknown")
-	     'consult-emms-track-key key))
+  (mapcar #'consult-emms--propertize-track-title
 	  (hash-table-keys emms-cache-db)))
 
 (defun consult-emms--add-track-current-playlist (track-name)
