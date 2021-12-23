@@ -36,6 +36,17 @@ not specify NAME, return DEFAULT."
 	 (track (gethash key emms-cache-db)))
     (assoc-default name track nil default)))
 
+(defun consult-emms--choose-track-artist (artist)
+  "Choose a track from those by ARTIST.
+
+The selected track is added to the current playlist."
+  (let* ((tracks (mapcar #'consult-emms--propertize-track-title
+			 (consult-emms--get-artist-tracks artist)))
+	 (track (consult--read tracks
+			       :prompt (format "%s: " artist)
+			       :category 'track)))
+    (consult-emms--add-track-current-playlist track)))
+
 ;;;; Sources
 
 (defcustom consult-emms-library-sources '(consult-emms--source-track

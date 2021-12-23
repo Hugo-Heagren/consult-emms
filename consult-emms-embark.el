@@ -34,13 +34,8 @@ Selected track is added to the current playlist."
   "Select a track by TRACK-NAME's artist.
 
 Selected track is added to the current playlist."
-  (let* ((artist (consult-emms--track-name-get track-name 'info-artist))
-	 (tracks (mapcar #'consult-emms--propertize-track-title
-			 (consult-emms--get-artist-tracks artist)))
-	 (track (consult--read tracks
-			       :prompt (format "%s: " artist)
-			       :category 'track)))
-    (consult-emms--add-track-current-playlist track)))
+  (let* ((artist (consult-emms--track-name-get track-name 'info-artist)))
+    (consult-emms--choose-track-artist artist)))
 
 (defun consult-emms-embark--edit-track-tags (track-name)
   "Edit TRACK-NAME's tags in EMMS' tag editor."
