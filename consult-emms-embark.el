@@ -104,7 +104,7 @@ Selected track is added to the current playlist."
 
 (defun consult-emms-embark--write-playlist (playlist-name)
   "Write PLAYLIST-NAME to file."
-  (consult-emms--with-current-playlist
+  (consult-emms-embark--with-buffer-from-text-property
    playlist-name (call-interactively 'emms-playlist-save)))
 
 (embark-define-keymap consult-emms-embark-playlist-actions
