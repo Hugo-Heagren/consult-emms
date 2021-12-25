@@ -14,9 +14,9 @@
 
 (defun consult-emms-embark--add-track-playlist (track-name)
   "Choose an EMMS playlist to add track TRACK-NAME to."
-  (let ((file (consult-emms--track-name-get track-name 'name))
-	 (emms-playlist-buffer (consult-emms--choose-buffer)))
-    (emms-add-file file)))
+  (let ((file (consult-emms--track-name-get track-name 'name)))
+    (consult-emms--with-chosen-current-playlist
+     (emms-add-file file))))
 
 (defun consult-emms-embark--track-goto-album (track-name)
   "Select a track from the album to which TRACK-NAME belongs.
@@ -51,8 +51,8 @@ Selected track is added to the current playlist."
 
 (defun consult-emms-embark--add-album-playlist (album-name)
   "Choose an EMMS playlist to add track ALBUM-NAME to."
-  (let ((emms-playlist-buffer (consult-emms--choose-buffer)))
-    (consult-emms--add-album album-name)))
+  (consult-emms--with-chosen-current-playlist
+   (consult-emms--add-album album-name)))
 
 (defun consult-emms-embark--album-goto-artist (album)
   "Select a track by ALBUM's artist.
@@ -81,8 +81,8 @@ Selected track is added to the current playlist."
 
 (defun consult-emms-embark--add-artist-playlist (artist-name)
   "Choose an EMMS playlist to add track ARTIST-NAME to."
-  (let ((emms-playlist-buffer (consult-emms--choose-buffer)))
-    (consult-emms--add-artist artist-name)))
+  (consult-emms--with-chosen-current-playlist
+   (consult-emms--add-artist artist-name)))
 
 (embark-define-keymap consult-emms-embark-artist-actions
   "Keymap for actions on artists in `consult-emms'."
