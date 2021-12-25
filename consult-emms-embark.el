@@ -77,6 +77,13 @@ Selected track is added to the current playlist."
 
 (add-to-list 'embark-keymap-alist '(album . consult-emms-embark-album-actions))
 
+;;;; Artists
+
+(defun consult-emms-embark--add-artist-playlist (artist-name)
+  "Choose an EMMS playlist to add track ARTIST-NAME to."
+  (let ((emms-playlist-buffer (consult-emms--choose-buffer)))
+    (consult-emms--add-artist artist-name)))
+
 (provide 'consult-emms-embark)
 
 ;;; consult-emms-embark.el ends here
