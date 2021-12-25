@@ -122,6 +122,13 @@ Selected track is added to the current playlist."
   (consult-emms-embark--with-buffer-from-text-property
    playlist-name (emms-shuffle)))
 
+(defun consult-emms-embark--rename-playlist (playlist-name)
+  "Rename playlist extracted from PLAYLIST-NAME."
+  (let ((buffer
+	 (consult-emms-embark--get-buffer-text-property playlist-name)))
+    (with-current-buffer buffer
+      (call-interactively 'rename-buffer))))
+
 (embark-define-keymap consult-emms-embark-playlist-actions
   "Keymap for actions on playlists in `consult-emms'."
   ("W" '("Write to file" . consult-emms-embark--write-playlist))
