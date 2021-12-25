@@ -93,6 +93,15 @@ Selected track is added to the current playlist."
 
 ;;;; Playlists
 
+(defun consult-emms-embark--get-buffer-text-property (playlist-name)
+  "Return text property 'consult-emms--buffer of PLAYLIST-NAME."
+  (get-text-property 0 'consult-emms--buffer playlist-name))
+
+(defun consult-emms-embark--with-buffer-from-text-property (playlist-name &rest body)
+  "Execute BODY with playlist from PLAYLIST-NAME as current."
+  (consult-emms--with-current-playlist
+   (consult-emms-embark--get-buffer-text-property playlist-name) body))
+
 (defun consult-emms-embark--write-playlist (playlist-name)
   "Write PLAYLIST-NAME to file."
   (consult-emms--with-current-playlist
