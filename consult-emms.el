@@ -49,6 +49,17 @@ The selected track is added to the current playlist."
 			       :category 'track)))
     (consult-emms--add-track-current-playlist track)))
 
+(defun consult-emms--choose-track-album (album)
+  "Choose a track from those by ALBUM.
+
+The selected track is added to the current playlist."
+  (let* ((tracks (mapcar #'consult-emms--propertize-track-title
+			 (consult-emms--get-album-tracks album)))
+	 (track (consult--read tracks
+			       :prompt (format "%s: " album)
+			       :category 'track)))
+    (consult-emms--add-track-current-playlist track)))
+
 ;;;; Sources
 
 (defcustom consult-emms-library-sources '(consult-emms--source-track

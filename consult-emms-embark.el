@@ -22,13 +22,8 @@
   "Select a track from the album to which TRACK-NAME belongs.
 
 Selected track is added to the current playlist."
-  (let* ((album (consult-emms--track-name-get track-name 'info-album))
-	 (tracks (mapcar #'consult-emms--propertize-track-title
-			 (consult-emms--get-album-tracks album)))
-	 (track (consult--read tracks
-			       :prompt (format "%s: " album)
-			       :category 'track)))
-    (consult-emms--add-track-current-playlist track)))
+  (let* ((album (consult-emms--track-name-get track-name 'info-album)))
+    (consult-emms--choose-track-album album)))
 
 (defun consult-emms-embark--track-goto-artist (track-name)
   "Select a track by TRACK-NAME's artist.
