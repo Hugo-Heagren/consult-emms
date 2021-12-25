@@ -117,6 +117,11 @@ Selected track is added to the current playlist."
   (consult-emms-embark--with-buffer-from-text-property
    playlist-name (emms-playlist-clear)))
 
+(defun consult-emms-embark--shuffle-playlist (playlist-name)
+  "Shuffle playlist extracted from PLAYLIST-NAME."
+  (consult-emms-embark--with-buffer-from-text-property
+   playlist-name (emms-shuffle)))
+
 (embark-define-keymap consult-emms-embark-playlist-actions
   "Keymap for actions on playlists in `consult-emms'."
   ("W" '("Write to file" . consult-emms-embark--write-playlist))
