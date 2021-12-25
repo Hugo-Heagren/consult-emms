@@ -107,6 +107,11 @@ Selected track is added to the current playlist."
   (consult-emms-embark--with-buffer-from-text-property
    playlist-name (call-interactively 'emms-playlist-save)))
 
+(defun consult-emms-embark--kill-playlist (playlist-name)
+  "Kill playlist buffer extracted from PLAYLIST-NAME."
+  (kill-buffer
+   (consult-emms-embark--get-buffer-text-property playlist-name)))
+
 (embark-define-keymap consult-emms-embark-playlist-actions
   "Keymap for actions on playlists in `consult-emms'."
   ("W" '("Write to file" . consult-emms-embark--write-playlist)))
