@@ -460,8 +460,7 @@ Returns the buffer object. The list if fetched with
 (defun consult-emms-metaplaylist ()
   "Choose an EMMS playlist to interact with."
   (interactive)
-  (let ((buffer (consult-emms--choose-buffer)))
-    (consult-emms--playlist buffer)))
+  (consult-emms--playlist (consult-emms--choose-buffer)))
 
 ;;;###autoload
 (defun consult-emms-current-playlist ()
