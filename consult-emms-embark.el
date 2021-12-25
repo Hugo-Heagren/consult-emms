@@ -126,7 +126,8 @@ Selected track is added to the current playlist."
   "Keymap for actions on playlists in `consult-emms'."
   ("W" '("Write to file" . consult-emms-embark--write-playlist))
   ("k" '("Kill playlist" . consult-emms-embark--kill-playlist))
-  ("c" '("Clear playlist" . consult-emms-embark--clear-playlist)))
+  ("c" '("Clear playlist" . consult-emms-embark--clear-playlist))
+  ("s" '("Shuffle playlist" . consult-emms-embark--shuffle-playlist)))
 
 (add-to-list 'embark-keymap-alist '(playlist . consult-emms-embark-playlist-actions))
 
