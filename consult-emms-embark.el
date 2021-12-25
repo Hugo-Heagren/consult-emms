@@ -145,7 +145,8 @@ Selected track is added to the current playlist."
   ("k" '("Kill playlist" . consult-emms-embark--kill-playlist))
   ("c" '("Clear playlist" . consult-emms-embark--clear-playlist))
   ("s" '("Shuffle playlist" . consult-emms-embark--shuffle-playlist))
-  ("r" '("Rename playlist buffer" . consult-emms-embark--rename-playlist)))
+  ("r" '("Rename playlist buffer" . consult-emms-embark--rename-playlist))
+  ("i" '("Insert into playlist" . consult-emms-embark--insert-playlist)))
 
 (add-to-list 'embark-keymap-alist '(playlist . consult-emms-embark-playlist-actions))
 
