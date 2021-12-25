@@ -33,6 +33,11 @@ as a symbol. THINGS can be a string or a symbol."
   `(let ((emms-playlist-buffer ,buffer))
      ,@body))
 
+(defun consult-emms--with-chosen-current-playlist (&rest body)
+  "Make a chosen EMMS playlist current and execute BODY."
+  (let ((buffer (consult-emms--choose-buffer)))
+    (consult-emms--with-current-playlist buffer body)))
+
 (defun consult-emms--track-name-get (track-name name &optional default)
   "Return the value of NAME property of track TRACK-NAME.
 
