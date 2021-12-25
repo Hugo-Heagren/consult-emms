@@ -7,6 +7,7 @@
 
 ;;; Code:
 
+(require 'emms)
 (require 'consult-emms)
 (require 'embark)
 
