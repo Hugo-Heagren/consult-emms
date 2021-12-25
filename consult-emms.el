@@ -28,6 +28,11 @@ as a symbol. THINGS can be a string or a symbol."
 		      (symbol-name thing)
 		    thing))))
 
+(defmacro consult-emms--with-current-playlist (buffer &rest body)
+  "Execute BODY with BUFFER as `emms-playlist-buffer'."
+  `(let ((emms-playlist-buffer ,buffer))
+     ,@body))
+
 (defun consult-emms--track-name-get (track-name name &optional default)
   "Return the value of NAME property of track TRACK-NAME.
 
