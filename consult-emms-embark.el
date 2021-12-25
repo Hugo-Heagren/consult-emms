@@ -97,6 +97,12 @@ Selected track is added to the current playlist."
   (consult-emms--with-current-playlist
    playlist-name (call-interactively 'emms-playlist-save)))
 
+(embark-define-keymap consult-emms-embark-playlist-actions
+  "Keymap for actions on playlists in `consult-emms'."
+  ("W" '("Write to file" . consult-emms-embark--write-playlist)))
+
+(add-to-list 'embark-keymap-alist '(playlist . consult-emms-embark-playlist-actions))
+
 (provide 'consult-emms-embark)
 
 ;;; consult-emms-embark.el ends here
