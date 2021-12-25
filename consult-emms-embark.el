@@ -129,6 +129,16 @@ Selected track is added to the current playlist."
     (with-current-buffer buffer
       (call-interactively 'rename-buffer))))
 
+(defun consult-emms-embark--insert-playlist (playlist-name)
+  "Append playlist extracted from PLAYLIST-NAME to other playlist."
+  (let ((new-playlist (consult-emms--choose-buffer))
+	(orig-playlist
+	 (consult-emms-embark--get-buffer-text-property playlist-name)))
+    (with-current-buffer new-playlist
+      (save-excursion
+	(goto-char (point-max))
+	(insert-buffer orig-playlist)))))
+
 (embark-define-keymap consult-emms-embark-playlist-actions
   "Keymap for actions on playlists in `consult-emms'."
   ("W" '("Write to file" . consult-emms-embark--write-playlist))
