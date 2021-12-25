@@ -114,7 +114,8 @@ Selected track is added to the current playlist."
 
 (embark-define-keymap consult-emms-embark-playlist-actions
   "Keymap for actions on playlists in `consult-emms'."
-  ("W" '("Write to file" . consult-emms-embark--write-playlist)))
+  ("W" '("Write to file" . consult-emms-embark--write-playlist))
+  ("k" '("Kill playlist" . consult-emms-embark--kill-playlist)))
 
 (add-to-list 'embark-keymap-alist '(playlist . consult-emms-embark-playlist-actions))
 
