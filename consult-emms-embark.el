@@ -54,6 +54,11 @@ Selected track is added to the current playlist."
 
 ;;;; Albums
 
+(defun consult-emms-embark--add-album-playlist (album-name)
+  "Choose an EMMS playlist to add track ALBUM-NAME to."
+  (let ((emms-playlist-buffer (consult-emms--choose-buffer)))
+    (consult-emms--add-album album-name)))
+
 (defun consult-emms-embark--album-goto-artist (album)
   "Select a track by ALBUM's artist.
 
