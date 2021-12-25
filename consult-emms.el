@@ -419,20 +419,30 @@ of the tracks's line in BUFFER."
 	 (track (apply 'consult--read `(,items ,@read-args))))
     (consult-emms--play-track-by-pos buffer track)))
 
+(defun consult-emms--lookup-buffer-text-property (_ candidates cand)
+  "Lookup CAND in CANDIDATES list and return property 'consult-emms--buffer."
+  (when-let (found (member cand candidates))
+    (get-text-property 0 'consult-emms--buffer (car found))))
+
 (defun consult-emms--choose-buffer ()
   "Choose one of the currently open EMMS playlists.
 
+Each candidate in the list is a string, the name of the buffer
+with whitespace trimmed from the ends, with a property
+'consult-emms--buffer, the value of which is the buffer itself.
 Returns the buffer object. The list if fetched with
 `emms-metaplaylist-mode-sorted-buffer-list'."
-  (let* ((playlist-list (mapcar (lambda (buffer) `(,(string-trim (buffer-name buffer)) . ,buffer))
-				(emms-metaplaylist-mode-sorted-buffer-list))))
-	 (consult--read playlist-list
-			:prompt "EMMS Playlist: "
-			:require-match t
-			:default (buffer-name emms-playlist-buffer)
-			:lookup #'consult--lookup-cdr
-			:category 'playlist
-			:sort nil)))
+  (let ((playlist-list (mapcar (lambda (buffer) (propertize
+					    (string-trim (buffer-name buffer))
+					    'consult-emms--buffer buffer))
+			       (emms-metaplaylist-mode-sorted-buffer-list))))
+    (consult--read playlist-list
+		   :prompt "EMMS Playlist: "
+		   :require-match t
+		   :default (buffer-name emms-playlist-buffer)
+		   :lookup #'consult-emms--lookup-buffer-text-property
+		   :category 'playlist
+		   :sort nil)))
 
 ;;;; Entry Points
 
