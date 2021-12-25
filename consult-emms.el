@@ -431,6 +431,7 @@ Returns the buffer object. The list if fetched with
 			:require-match t
 			:default (buffer-name emms-playlist-buffer)
 			:lookup #'consult--lookup-cdr
+			:category 'playlist
 			:sort nil)))
 
 ;;;; Entry Points
