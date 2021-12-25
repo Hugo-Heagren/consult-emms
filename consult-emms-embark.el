@@ -90,6 +90,13 @@ Selected track is added to the current playlist."
 
 (add-to-list 'embark-keymap-alist '(artist . consult-emms-embark-artist-actions))
 
+;;;; Playlists
+
+(defun consult-emms-embark--write-playlist (playlist-name)
+  "Write PLAYLIST-NAME to file."
+  (consult-emms--with-current-playlist
+   playlist-name (call-interactively 'emms-playlist-save)))
+
 (provide 'consult-emms-embark)
 
 ;;; consult-emms-embark.el ends here
