@@ -176,9 +176,9 @@ TRACK-NAME should be a propertized string, from which a key in
   (emms-add-file (consult-emms--track-name-get track-name 'name)))
 
 (consult-emms--def-library-source track
-				  :items    consult-emms--get-tracks
-				  :action   #'consult-emms--add-track-current-playlist
-				  :narrow   ?t)
+				  :items  consult-emms--get-tracks
+				  :action consult-emms--add-track-current-playlist
+				  :narrow ?t)
 
 ;;;;; Albums
 
