@@ -93,59 +93,39 @@ Selected track is added to the current playlist."
 
 ;;;; Playlists
 
-(defun consult-emms-embark--get-buffer-text-property (playlist-name)
-  "Return text property 'consult-emms--buffer of PLAYLIST-NAME."
-  (get-text-property 0 'consult-emms--buffer playlist-name))
-
-(defun consult-emms-embark--with-buffer-from-text-property (playlist-name &rest body)
-  "Execute BODY with playlist from PLAYLIST-NAME as current."
-  (consult-emms--with-current-playlist
-   (consult-emms-embark--get-buffer-text-property playlist-name) body))
-
-(defun consult-emms-embark--write-playlist (playlist-name)
-  "Write PLAYLIST-NAME to file."
-  (consult-emms-embark--with-buffer-from-text-property
-   playlist-name (call-interactively 'emms-playlist-save)))
-
-(defun consult-emms-embark--kill-playlist (playlist-name)
-  "Kill playlist buffer extracted from PLAYLIST-NAME."
-  (kill-buffer
-   (consult-emms-embark--get-buffer-text-property playlist-name)))
+(defun consult-emms-embark--write-playlist (playlist)
+  "Write PLAYLIST to a file (prompts for filename)."
+  ;; If the playlist is the current buffer, EMMS won't raise
+  ;; exceptions about the buffer not being current (which the user
+  ;; likely knows already if they are using `consult-emms'!)
+  (with-current-buffer playlist
+    (consult-emms--with-current-playlist
+     playlist (call-interactively 'emms-playlist-save))))
 
 (defun consult-emms-embark--clear-playlist (playlist-name)
-  "Clear playlist extracted from PLAYLIST-NAME."
-  (consult-emms-embark--with-buffer-from-text-property
-   playlist-name (emms-playlist-clear)))
+  "Clear playlist in buffer PLAYLIST-NAME."
+  (with-current-buffer playlist-name
+    (emms-playlist-clear)))
 
 (defun consult-emms-embark--shuffle-playlist (playlist-name)
-  "Shuffle playlist extracted from PLAYLIST-NAME."
-  (consult-emms-embark--with-buffer-from-text-property
-   playlist-name (emms-shuffle)))
-
-(defun consult-emms-embark--rename-playlist (playlist-name)
-  "Rename playlist extracted from PLAYLIST-NAME."
-  (let ((buffer
-	 (consult-emms-embark--get-buffer-text-property playlist-name)))
-    (with-current-buffer buffer
-      (call-interactively 'rename-buffer))))
+  "Shuffle playlist in buffer PLAYLIST-NAME."
+  (with-current-buffer playlist-name (emms-shuffle)))
 
 (defun consult-emms-embark--insert-playlist (playlist-name)
-  "Append playlist extracted from PLAYLIST-NAME to other playlist."
-  (let ((new-playlist (consult-emms--choose-buffer))
-	(orig-playlist
-	 (consult-emms-embark--get-buffer-text-property playlist-name)))
+  "Append playlist in buffer PLAYLIST-NAME to another playlist."
+  (let ((new-playlist (consult-emms--choose-buffer)))
     (with-current-buffer new-playlist
-      (save-excursion
-	(goto-char (point-max))
-	(insert-buffer orig-playlist)))))
+      (let ((inhibit-read-only t))
+	(save-excursion
+	  (goto-char (point-max))
+	  (insert-buffer playlist-name))))))
 
 (embark-define-keymap consult-emms-embark-playlist-actions
   "Keymap for actions on playlists in `consult-emms'."
+  :parent embark-buffer-map
   ("W" '("Write to file" . consult-emms-embark--write-playlist))
-  ("k" '("Kill playlist" . consult-emms-embark--kill-playlist))
   ("c" '("Clear playlist" . consult-emms-embark--clear-playlist))
   ("s" '("Shuffle playlist" . consult-emms-embark--shuffle-playlist))
-  ("r" '("Rename playlist buffer" . consult-emms-embark--rename-playlist))
   ("i" '("Insert into playlist" . consult-emms-embark--insert-playlist)))
 
 (add-to-list 'embark-keymap-alist '(playlist . consult-emms-embark-playlist-actions))

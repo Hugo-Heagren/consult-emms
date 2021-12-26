@@ -28,15 +28,22 @@ as a symbol. THINGS can be a string or a symbol."
 		      (symbol-name thing)
 		    thing))))
 
+(defun consult-emms--list-playlists ()
+  "Get a list of names of EMMS playlist buffers."
+  (mapcar 'buffer-name
+	  (emms-metaplaylist-mode-sorted-buffer-list)))
+
 (defmacro consult-emms--with-current-playlist (buffer &rest body)
-  "Execute BODY with BUFFER as `emms-playlist-buffer'."
-  `(let ((emms-playlist-buffer ,buffer))
+  "Execute BODY with BUFFER as `emms-playlist-buffer'.
+
+BUFFER is a string, the name of a buffer."
+  `(let ((emms-playlist-buffer (get-buffer ,buffer)))
      ,@body))
 
-(defun consult-emms--with-chosen-current-playlist (&rest body)
+(defmacro consult-emms--with-chosen-current-playlist (&rest body)
   "Make a chosen EMMS playlist current and execute BODY."
-  (let ((buffer (consult-emms--choose-buffer)))
-    (consult-emms--with-current-playlist buffer body)))
+  `(let ((buffer (consult-emms--choose-buffer)))
+     (consult-emms--with-current-playlist buffer ,@body)))
 
 (defun consult-emms--track-name-get (track-name name &optional default)
   "Return the value of NAME property of track TRACK-NAME.
@@ -379,11 +386,10 @@ of the tracks's line in BUFFER."
 
 (defun consult-emms--playlist-source-from-buffer (buffer)
   "Make a source for `consult-emms-playlists' from BUFFER."
-  (let* ((name (buffer-name buffer))
-	 (hist-sym (intern (concat "consult-emms--" name "-buffer-history"))))
+  (let ((hist-sym (intern (concat "consult-emms--" buffer "-buffer-history"))))
     `(:items ,(consult-emms--get-tracks-playlist-buffer buffer)
       :category track
-      :name ,name
+      :name ,buffer
       :sort nil
       :action (lambda (str) (consult-emms--play-track-by-pos
 			       ,buffer (get-text-property 0 'consult-emms-track-pos str))))))
@@ -394,7 +400,9 @@ of the tracks's line in BUFFER."
     (get-text-property 0 'consult-emms-track-pos (car found))))
 
 (defun consult-emms--playlist (buffer)
-  "Select a track from EMMS buffer BUFFER."
+  "Select a track from EMMS buffer BUFFER.
+
+BUFFER is a string, is the name of a buffer."
   ;; `consult-emms--playlist-source-from-buffer' does most of the work
   ;; of forming the args for us, and it's a good idea to avoid code
   ;; duplication, so we use it here. BUT, it forms a source for
@@ -413,34 +421,23 @@ of the tracks's line in BUFFER."
 	 (filtered-args (cl-loop for (key value) on raw-args by 'cddr
 				 if (member key allowed)
 				 collect key and collect value))
-	 (read-args (append `(:prompt ,(format "EMMS playlist <%s>: " (string-trim (buffer-name buffer)))
+	 (read-args (append `(:prompt ,(format "EMMS playlist <%s>: " buffer)
 			      :lookup consult-emms--lookup-playlist-pos)
 			    filtered-args))
 	 (track (apply 'consult--read `(,items ,@read-args))))
     (consult-emms--play-track-by-pos buffer track)))
 
-(defun consult-emms--lookup-buffer-text-property (_ candidates cand)
-  "Lookup CAND in CANDIDATES list and return property 'consult-emms--buffer."
-  (when-let (found (member cand candidates))
-    (get-text-property 0 'consult-emms--buffer (car found))))
-
 (defun consult-emms--choose-buffer ()
   "Choose one of the currently open EMMS playlists.
 
-Each candidate in the list is a string, the name of the buffer
-with whitespace trimmed from the ends, with a property
-'consult-emms--buffer, the value of which is the buffer itself.
-Returns the buffer object. The list if fetched with
-`emms-metaplaylist-mode-sorted-buffer-list'."
-  (let ((playlist-list (mapcar (lambda (buffer) (propertize
-					    (string-trim (buffer-name buffer))
-					    'consult-emms--buffer buffer))
-			       (emms-metaplaylist-mode-sorted-buffer-list))))
+Each candidate in the list is the name of a buffer. The list is
+fetched with `consult-emms--list-playlists', then
+transformed with `buffer-name'."
+  (let ((playlist-list (consult-emms--list-playlists)))
     (consult--read playlist-list
 		   :prompt "EMMS Playlist: "
 		   :require-match t
 		   :default (buffer-name emms-playlist-buffer)
-		   :lookup #'consult-emms--lookup-buffer-text-property
 		   :category 'playlist
 		   :sort nil)))
 
@@ -461,7 +458,7 @@ Returns the buffer object. The list if fetched with
   "Select a track from an EMMS buffer. Each buffer is a category."
   (interactive)
   (let ((playlists (mapcar 'consult-emms--playlist-source-from-buffer
-			 (emms-metaplaylist-mode-sorted-buffer-list))))
+			 (consult-emms--list-playlists))))
     (consult--multi playlists
 		    :require-match t
 		    :prompt "Track: "
@@ -477,7 +474,7 @@ Returns the buffer object. The list if fetched with
 (defun consult-emms-current-playlist ()
   "Select a track from the current EMMS playlist."
   (interactive)
-  (consult-emms--playlist emms-playlist-buffer))
+  (consult-emms--playlist (buffer-name emms-playlist-buffer)))
 
 (provide 'consult-emms)
 
