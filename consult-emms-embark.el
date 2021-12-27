@@ -130,7 +130,8 @@ Selected track is added to the current playlist."
   ("W" '("Write to file" . consult-emms-embark--write-playlist))
   ("c" '("Clear playlist" . consult-emms-embark--clear-playlist))
   ("s" '("Shuffle playlist" . consult-emms-embark--shuffle-playlist))
-  ("i" '("Insert into playlist" . consult-emms-embark--insert-playlist)))
+  ("i" '("Insert into playlist" . consult-emms-embark--insert-playlist))
+  ("a" '("Make active/current playlist" . consult-emms-embark--playlist-set-active)))
 
 (add-to-list 'embark-keymap-alist '(playlist . consult-emms-embark-playlist-actions))
 
