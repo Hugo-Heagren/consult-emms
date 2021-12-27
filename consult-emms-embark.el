@@ -130,6 +130,13 @@ Selected track is added to the current playlist."
 
 (add-to-list 'embark-keymap-alist '(playlist . consult-emms-embark-playlist-actions))
 
+;;;; Streams
+
+(defun consult-emms-embark--add-stream-playlist (stream-name)
+  "Choose an EMMS playlist to add track STREAM-NAME to."
+  (consult-emms--with-chosen-current-playlist
+   (consult-emms--add-stream stream-name)))
+
 (provide 'consult-emms-embark)
 
 ;;; consult-emms-embark.el ends here
