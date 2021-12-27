@@ -120,6 +120,10 @@ Selected track is added to the current playlist."
 	  (goto-char (point-max))
 	  (insert-buffer playlist-name))))))
 
+(defun consult-emms-embark--playlist-set-active (playlist-name)
+  "Make buffer PLAYLIST-NAME the current/active EMMS playlist."
+  (emms-playlist-set-playlist-buffer playlist-name))
+
 (embark-define-keymap consult-emms-embark-playlist-actions
   "Keymap for actions on playlists in `consult-emms'."
   :parent embark-buffer-map
