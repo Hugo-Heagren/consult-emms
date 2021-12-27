@@ -137,6 +137,12 @@ Selected track is added to the current playlist."
   (consult-emms--with-chosen-current-playlist
    (consult-emms--add-stream stream-name)))
 
+(embark-define-keymap consult-emms-embark-stream-actions
+  "Keymap for actions on streams in `consult-emms'."
+  ("p" '("Add to playlist" . consult-emms-embark--add-stream-playlist)))
+
+(add-to-list 'embark-keymap-alist '(stream . consult-emms-embark-stream-actions))
+
 (provide 'consult-emms-embark)
 
 ;;; consult-emms-embark.el ends here
