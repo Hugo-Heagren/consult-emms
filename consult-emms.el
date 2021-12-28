@@ -391,7 +391,7 @@ of the tracks's line in BUFFER."
   "Make a source for `consult-emms-playlists' from BUFFER."
   (let ((hist-sym (intern (concat "consult-emms--" buffer "-buffer-history"))))
     `(:items ,(consult-emms--get-tracks-playlist-buffer buffer)
-      :category track
+      :category playlist-track
       :name ,buffer
       :sort nil
       :action (lambda (str) (consult-emms--do-playlist-track
