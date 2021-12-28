@@ -48,6 +48,20 @@ Selected track is added to the current playlist."
 
 (add-to-list 'embark-keymap-alist '(track . consult-emms-embark-track-actions))
 
+;;;;; Playlist Tracks
+;; (tracks which have a position on a playlist)
+
+(defun consult-emms-embark--kill-playlist-track (track-name)
+  (consult-emms--do-playlist-track
+   track-name (emms-playlist-mode-kill-entire-track)))
+
+(embark-define-keymap consult-emms-embark-playlist-track-actions
+  "Keymap for actions on tracks in playlists in `consult-emms'."
+  :parent consult-emms-embark-track-actions
+  ("k" '("Kill track" . consult-emms-embark--kill-playlist-track)))
+
+(add-to-list 'embark-keymap-alist '(playlist-track . consult-emms-embark-playlist-track-actions))
+
 ;;;; Albums
 
 (defun consult-emms-embark--add-album-playlist (album-name)
