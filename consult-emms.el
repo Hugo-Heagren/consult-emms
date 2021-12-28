@@ -373,16 +373,19 @@ of the tracks's line in BUFFER."
 			       (key (emms-track-get trk 'name)))
 			  (propertize title
 				      'consult-emms-track-key key
-				      'consult-emms-track-pos (point)))
+				      'consult-emms-track-pos (point)
+				      'consult-emms-track-buffer buffer))
 		and
 		do (forward-line)
 		end))))
 
-(defun consult-emms--play-track-by-pos (buffer pos)
-  "Play track at POS in emms playlist buffer BUFFER."
-  (with-current-buffer buffer
-    (goto-char pos)
-    (emms-playlist-mode-play-current-track)))
+(defmacro consult-emms--do-playlist-track (track-name &rest body)
+  "Goto position of TRACK-NAME in its playlist and execute BODY."
+  `(let ((pos (get-text-property 0 'consult-emms-track-pos ,track-name))
+	 (buffer (get-text-property 0 'consult-emms-track-buffer ,track-name)))
+     (with-current-buffer buffer
+       (goto-char pos)
+       ,@body)))
 
 (defun consult-emms--playlist-source-from-buffer (buffer)
   "Make a source for `consult-emms-playlists' from BUFFER."
@@ -391,8 +394,8 @@ of the tracks's line in BUFFER."
       :category track
       :name ,buffer
       :sort nil
-      :action (lambda (str) (consult-emms--play-track-by-pos
-			       ,buffer (get-text-property 0 'consult-emms-track-pos str))))))
+      :action (lambda (str) (consult-emms--do-playlist-track
+			str (emms-playlist-mode-play-current-track))))))
 
 (defun consult-emms--lookup-playlist-pos (_ candidates cand)
   "Lookup CAND in CANDIDATES list and return property 'consult--candidate."
@@ -410,22 +413,27 @@ BUFFER is a string, is the name of a buffer."
   ;; `consult--read', so we have to transform it a bit.
   (let* ((raw-args (consult-emms--playlist-source-from-buffer buffer))
 	 (items (plist-get raw-args :items))
+	 (action (plist-get raw-args :action))
 	 ;; TODO Get this list programatically
 	 (allowed '(:prompt :predicate :require-match ;; Keywords in `consult--read'
 		    :history :default :keymap
 		    :category :initial :narrow
 		    :add-history :annotate :state
-		    :preview-key :sort :lookup
-		    :group :inherit-input-method))
+		    :preview-key :sort :group
+		    :inherit-input-method))
 	 ;; Use only arg keys used by `consult--read'
 	 (filtered-args (cl-loop for (key value) on raw-args by 'cddr
 				 if (member key allowed)
 				 collect key and collect value))
-	 (read-args (append `(:prompt ,(format "EMMS playlist <%s>: " buffer)
-			      :lookup consult-emms--lookup-playlist-pos)
+	 (read-args (append `(:prompt ,(format "EMMS playlist <%s>: " buffer))
 			    filtered-args))
+	 ;; Lots of the actions use text properties as variables, so
+	 ;; make sure they persist through minibuffer choice
+	 (minibuffer-allow-text-properties t)
 	 (track (apply 'consult--read `(,items ,@read-args))))
-    (consult-emms--play-track-by-pos buffer track)))
+    ;; Using the action extracted above guarantees that the behaviour
+    ;; will be the same as with the corresponding source
+    (funcall action track)))
 
 (defun consult-emms--choose-buffer ()
   "Choose one of the currently open EMMS playlists.
