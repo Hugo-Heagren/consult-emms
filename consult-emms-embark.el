@@ -42,9 +42,16 @@ Selected track is added to the current playlist."
 (embark-define-keymap consult-emms-embark-track-actions
   "Keymap for actions on tracks in `consult-emms'."
   ("p" '("Add to playlist" . consult-emms-embark--add-track-playlist))
-  ("b" '("Goto album" . consult-emms-embark--track-goto-album))
-  ("a" '("Goto artist" . consult-emms-embark--track-goto-artist))
+  ("g" '("Goto..." . consult-emms-embark-track-goto))
   ("e" '("Edit tags" . consult-emms-embark--edit-track-tags)))
+
+(defvar consult-emms-embark-track-goto
+  (let ((map (make-sparse-keymap)))
+    (keymap-set map "a" '("Artist" . consult-emms-embark--track-goto-artist))
+    (keymap-set map "b" '("Album" . consult-emms-embark--track-goto-album))
+    map)
+  "Keymap for actions moving from a track to an associated entity.")
+(fset 'consult-emms-embark-track-goto consult-emms-embark-track-goto)
 
 (add-to-list 'embark-keymap-alist '(track . consult-emms-embark-track-actions))
 
