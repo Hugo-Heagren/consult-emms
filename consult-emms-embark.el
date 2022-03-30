@@ -115,7 +115,15 @@ Selected track is added to the current playlist."
 
 (embark-define-keymap consult-emms-embark-artist-actions
   "Keymap for actions on artists in `consult-emms'."
-  ("p" '("Add to playlist". consult-emms-embark--add-artist-playlist)))
+  ("p" '("Add to playlist". consult-emms-embark--add-artist-playlist))
+  ("g" '("Goto...". consult-emms-embark-artist-goto)))
+
+(defvar consult-emms-embark-artist-goto
+  (let ((map (make-sparse-keymap)))
+    (keymap-set map "a" '("Artist" . consult-emms--choose-track-artist))
+    map)
+  "Keymap for actions moving from a track to an associated entity.")
+(fset 'consult-emms-embark-artist-goto consult-emms-embark-artist-goto)
 
 (add-to-list 'embark-keymap-alist '(artist . consult-emms-embark-artist-actions))
 
