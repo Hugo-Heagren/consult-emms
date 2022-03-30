@@ -110,6 +110,23 @@ Selected track is added to the current playlist."
 		  (emms-track-get (gethash any-track emms-cache-db) 'info-artist))))
     (consult-emms--choose-track-artist artist)))
 
+;; NOTE This blatantly copies the structure of the above function, but
+;; two uses really enough to justify abstracting it out.
+(defun consult-emms-embark--album-add-artist (album)
+  "Select a track by ALBUM's artist.
+
+Selected track is added to the current playlist."
+  ;; All the tracks will have the same album-artist, so we just check
+  ;; the first one
+  (let* ((any-track (car (consult-emms--get-album-tracks album)))
+	 ;; If there is an explicit 'albumartist' tag, use that. If
+	 ;; not (lots of files are not very well tagged), default to
+	 ;; the artist of the song.
+	 (artist (or
+		  (emms-track-get (gethash any-track emms-cache-db) 'info-albumartist)
+		  (emms-track-get (gethash any-track emms-cache-db) 'info-artist))))
+    (consult-emms--add-artist artist)))
+
 (embark-define-keymap consult-emms-embark-album-actions
   "Keymap for actions on albums in `consult-emms'."
   ("p" '("Add to playlist". consult-emms-embark--add-album-playlist))
