@@ -33,6 +33,11 @@ Selected track is added to the current playlist."
   (let* ((artist (consult-emms--track-name-get track-name 'info-artist)))
     (consult-emms--choose-track-artist artist)))
 
+(defun consult-emms-embark--track-add-album (track-name)
+  "Add album to which TRACK-NAME belongs to current playlist."
+  (let* ((album (consult-emms--track-name-get track-name 'info-album)))
+    (consult-emms--add-album album)))
+
 (defun consult-emms-embark--edit-track-tags (track-name)
   "Edit TRACK-NAME's tags in EMMS' tag editor."
   (let* ((key (get-text-property 0 'consult-emms-track-key track-name))
