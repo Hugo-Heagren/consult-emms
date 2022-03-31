@@ -153,7 +153,7 @@ Selected track is added to the current playlist."
 ;;;; Artists
 
 (defun consult-emms-embark--add-artist-playlist (artist-name)
-  "Choose an EMMS playlist to add track ARTIST-NAME to."
+  "Choose an EMMS playlist to add artist ARTIST-NAME to."
   (consult-emms--with-chosen-current-playlist
    (consult-emms--add-artist artist-name)))
 
