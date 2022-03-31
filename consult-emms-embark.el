@@ -218,7 +218,7 @@ Selected track is added to the current playlist."
 ;;;; Streams
 
 (defun consult-emms-embark--add-stream-playlist (stream-name)
-  "Choose an EMMS playlist to add track STREAM-NAME to."
+  "Choose an EMMS playlist to add stream STREAM-NAME to."
   (consult-emms--with-chosen-current-playlist
    (consult-emms--add-stream stream-name)))
 
