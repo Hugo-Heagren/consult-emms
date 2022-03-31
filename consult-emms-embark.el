@@ -31,7 +31,7 @@ Selected track is added to the current playlist."
 
 Selected track is added to the current playlist."
   (let* ((artist (consult-emms--track-name-get track-name 'info-artist)))
-    (consult-emms--choose-track-artist artist)))
+    (consult-emms--choose-track-or-album-artist artist)))
 
 (defun consult-emms-embark--track-add-album (track-name)
   "Add album to which TRACK-NAME belongs to current playlist."
@@ -108,7 +108,7 @@ Selected track is added to the current playlist."
 	 (artist (or
 		  (emms-track-get (gethash any-track emms-cache-db) 'info-albumartist)
 		  (emms-track-get (gethash any-track emms-cache-db) 'info-artist))))
-    (consult-emms--choose-track-artist artist)))
+    (consult-emms--choose-track-or-album-artist artist)))
 
 ;; NOTE This blatantly copies the structure of the above function, but
 ;; two uses really enough to justify abstracting it out.
@@ -164,7 +164,7 @@ Selected track is added to the current playlist."
 
 (defvar consult-emms-embark-artist-goto
   (let ((map (make-sparse-keymap)))
-    (keymap-set map "a" '("Artist" . consult-emms--choose-track-artist))
+    (keymap-set map "a" '("Artist" . consult-emms--choose-track-or-album-artist))
     map)
   "Keymap for actions moving from a track to an associated entity.")
 (fset 'consult-emms-embark-artist-goto consult-emms-embark-artist-goto)
