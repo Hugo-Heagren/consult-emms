@@ -91,7 +91,7 @@ Selected track is added to the current playlist."
 ;;;; Albums
 
 (defun consult-emms-embark--add-album-playlist (album-name)
-  "Choose an EMMS playlist to add track ALBUM-NAME to."
+  "Choose an EMMS playlist to add album ALBUM-NAME to."
   (consult-emms--with-chosen-current-playlist
    (consult-emms--add-album album-name)))
 
