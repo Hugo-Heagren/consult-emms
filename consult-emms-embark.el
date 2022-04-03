@@ -228,7 +228,7 @@ Selected track is added to the current playlist."
 
 (add-to-list 'embark-keymap-alist '(stream . consult-emms-embark-stream-actions))
 
-;;;; EMMS Buffer Embark Target
+;;;; EMMS Buffer Embark Targets
 
 (defun consult-emms-embark-identify-music-at-point ()
   "Identify musical object at point and its type.
@@ -260,6 +260,27 @@ the form (TYPE ID BEG . END), where:
 (add-to-list
  'embark-target-finders
  'consult-emms-embark-identify-music-at-point)
+
+(defun consult-emms-embark-identify-playlist-at-point ()
+  "Identify EMMS playlist at point.
+
+In an EMMS metaplaylist buffer, if there is a name of a buffer at
+point, return a list `(playlist BUFFER-NAME BEG END)' where:
+- BUFFER-NAME is the name of the buffer
+- BEG is the position of the BOL
+- END is the position of the EOL."
+  (when-let* (((eq major-mode 'emms-metaplaylist-mode))
+	      (bol (line-beginning-position))
+	      (eol (line-end-position))
+	      (buffer-name (buffer-substring bol eol))
+	      ;; This effectively acts a check to see if there really
+	      ;; IS a buffer with the name `buffer-name'
+	      ((get-buffer buffer-name)))
+    `(playlist ,buffer-name ,bol . ,eol)))
+
+(add-to-list
+ 'embark-target-finders
+ 'consult-emms-embark-identify-playlist-at-point)
 
 (provide 'consult-emms-embark)
 
