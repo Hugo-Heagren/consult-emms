@@ -228,6 +228,39 @@ Selected track is added to the current playlist."
 
 (add-to-list 'embark-keymap-alist '(stream . consult-emms-embark-stream-actions))
 
+;;;; EMMS Buffer Embark Target
+
+(defun consult-emms-embark-identify-music-at-point ()
+  "Identify musical object at point and its type.
+
+If an EMMS track, artist or album is at point, return a list of
+the form (TYPE ID BEG . END), where:
+- TYPE is the relevant completion type, as recognised by embark and
+  consult ('album, 'track, etc.)
+- ID is an identifier for the thing, formatted appropriately for its
+  type
+- BEG is the position of the BOL
+- END is the position of the EOL."
+  (when-let ((data (emms-browser-bdata-at-point))
+	     (type-indicator
+	      (assoc-default 'type data))
+	     (type (assoc-default
+		    type-indicator
+		    '((info-title . track)
+		      (info-album . album)
+		      (info-artist . artist))))
+	     (str (pcase type
+		    ('track (consult-emms--propertize-track-title
+			     (assoc-default
+			      'name
+			      (car (assoc-default 'data data)))))
+		    ((or album artist) (assoc-default 'name data)))))
+    `(,type ,str ,(line-beginning-position) . ,(line-end-position))))
+
+(add-to-list
+ 'embark-target-finders
+ 'consult-emms-embark-identify-music-at-point)
+
 (provide 'consult-emms-embark)
 
 ;;; consult-emms-embark.el ends here
