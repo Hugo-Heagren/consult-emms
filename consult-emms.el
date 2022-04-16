@@ -97,7 +97,8 @@ The selected track is added to the current playlist."
 
 (defcustom consult-emms-library-sources '(consult-emms--source-track
 					  consult-emms--source-album
-					  consult-emms--source-artist)
+					  consult-emms--source-artist
+					  consult-emms--source-genre)
   "Sources used by `consult-emms-library'.
 
 See `consult--multi' for a description of the source values. The
@@ -325,6 +326,98 @@ Returns a list of keys in `emms-cache-db'."
 				  :narrow ?a
 				  :items  consult-emms--get-artists
 				  :action consult-emms--add-artist)
+;;;;; Genre
+
+(defvar consult-emms--genre-cache (make-hash-table :test #'equal)
+  "Hash table caching genres for `consult-emms--source-genre'.")
+
+(defun consult-emms--genre-cache-reset ()
+  "Populate `consult-emms--genre-cache'.
+
+Each key is an genre name (as a string), each value is a list of
+keys in `emms-cache-db' for the tracks in that genre. Returns the
+list of genre names."
+  (let ((genres '()))
+    (maphash
+     (lambda (key value) (if-let ((genre (assoc-default 'info-genre value nil nil)))
+			(progn (puthash genre
+					(append (list key) (gethash genre consult-emms--genre-cache))
+					consult-emms--genre-cache)
+			       (setq genres (append (list genre) genres)))))
+     emms-cache-db)
+    (delete-dups genres)))
+
+(defun consult-emms--get-genres ()
+  "Return a list of genres in `emms-cache-db'.
+
+Specifically, if caching is disabled for
+`consult-emms--source-genre', or `consult-emms--genre-cache' is
+empty and `emms-cache-db' is not empty, then rebuild the cache
+with `consult-emms--genre-cache-reset'. (The second situation
+covers the first invocation in a new session.) Then whether the
+cache was rebuilt or not, return a list of keys for
+`consult-emms--genre-cache'."
+  (or (when (or (not (plist-get consult-emms--source-genre :cache)) ;; Caching disabled
+		(and (not (hash-table-empty-p emms-cache-db)) ;; the emms cache is non-empty and...
+			  (hash-table-empty-p consult-emms--genre-cache))) ;; ...the cache var is empty
+	(consult-emms--genre-cache-reset)) ;; Update the cache (this returns the new list of keys)
+      ;; Don't need to update, just return the keys
+      (hash-table-keys consult-emms--genre-cache)))
+
+(defun consult-emms-sort-genre-album-number (a b)
+  "Sort tracks by album name, then track number.
+
+If A and B are in different albums, return t if A's is
+alphabetically first, nil if B's is.
+
+If A and B are in the same album, try to get the tracknumber of
+each track with `consult-emms--guess-track-number', and return t
+if A's is lower than B's. If no good data can be found, return t.
+
+Albums are compared by `string='.
+
+This is meant to be a sensible default for
+`consult-emms--sort-genre-function'."
+  (let* ((tracka (gethash a emms-cache-db))
+	 (trackb (gethash b emms-cache-db))
+	 (albuma (assoc-default 'info-album tracka))
+	 (albumb (assoc-default 'info-album trackb)))
+    ;; Tracks in same album?
+    (if (string= albuma albumb)
+	;; If yes, try sorting numerically by track number
+	(if-let ((numa (consult-emms--guess-track-number tracka))
+		 (numb (consult-emms--guess-track-number trackb)))
+	    (> numa numb)
+	  ;; No tracknumber data to use for sorting, return sort a before b ¯\_(ツ)_/¯
+	  t)
+      ;; Albums differ; sort alphabetically by album name
+      (string-collate-lessp albuma albumb))))
+
+(defcustom consult-emms--sort-genre-function #'consult-emms-sort-genre-album-number
+  "Function for sorting tracks when retrieving a genre.
+
+Used by `consult-emms--get-genre-tracks'."
+  :group 'consult-emms
+  :type 'function)
+
+(defun consult-emms--get-genre-tracks (genre)
+  "Return tracks in GENRE, a key in `consult-emms--genre-cache'.
+
+Returns a list of keys in `emms-cache-db'. These are sorted by
+their track number, compared with
+`consult-emms--sort-genre-function'."
+  (sort (gethash genre consult-emms--genre-cache)
+	consult-emms--sort-genre-function))
+
+(defun consult-emms--add-genre (genre)
+  (mapcar (lambda (trk)
+	    (emms-add-file (assoc-default 'name (gethash trk emms-cache-db) nil nil)))
+	  (consult-emms--get-genre-tracks genre)))
+
+(consult-emms--def-library-source genre
+				  :narrow ?g
+				  :items  consult-emms--get-genres
+				  :action consult-emms--add-genre)
 
 ;;;;; Streams
 
