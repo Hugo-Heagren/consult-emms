@@ -72,6 +72,7 @@ Selected track is added to the current playlist."
   (let ((map (make-sparse-keymap)))
     (keymap-set map "a" '("Artist" . consult-emms-embark--track-goto-artist))
     (keymap-set map "b" '("Album" . consult-emms-embark--track-goto-album))
+    (keymap-set map "g" '("Genre" . consult-emms-embark--track-goto-genre))
     map)
   "Keymap for actions moving from a track to an associated entity.")
 (fset 'consult-emms-embark-track-goto consult-emms-embark-track-goto)
