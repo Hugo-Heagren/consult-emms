@@ -217,6 +217,11 @@ Selected track is added to the current playlist."
 
 ;;;; Genre
 
+(defun consult-emms-embark--add-genre-playlist (genre-name)
+  "Choose an EMMS playlist to add genre GENRE-NAME to."
+  (consult-emms--with-chosen-current-playlist
+   (consult-emms--add-genre genre-name)))
+
 ;;;; Streams
 
 (defun consult-emms-embark--add-stream-playlist (stream-name)
