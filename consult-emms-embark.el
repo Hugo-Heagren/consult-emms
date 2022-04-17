@@ -249,6 +249,20 @@ the track list."
 		    :require-match t
 		    :prompt (format "%s: " genre))))
 
+(embark-define-keymap consult-emms-embark-genre-actions
+  "Keymap for actions on genres in `consult-emms'."
+  ("p" '("Add to playlist". consult-emms-embark--add-genre-playlist))
+  ("g" '("Goto...". consult-emms-embark-genre-goto)))
+
+(defvar consult-emms-embark-genre-goto
+  (let ((map (make-sparse-keymap)))
+    (keymap-set map "g" '("Genre" . consult-emms--choose-track-or-album-genre))
+    map)
+  "Keymap for actions moving from a track to an associated entity.")
+(fset 'consult-emms-embark-genre-goto consult-emms-embark-genre-goto)
+
+(add-to-list 'embark-keymap-alist '(genre . consult-emms-embark-genre-actions))
+
 ;;;; Streams
 
 (defun consult-emms-embark--add-stream-playlist (stream-name)
