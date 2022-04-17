@@ -124,6 +124,15 @@ Selected track is added to the current playlist."
 		  (emms-track-get (gethash any-track emms-cache-db) 'info-artist))))
     (consult-emms--choose-track-or-album-artist artist)))
 
+(defun consult-emms-embark--album-goto-genre (album)
+  "Select a track or album in ALBUM's genre.
+
+The first song in ALBUM is examined. Selection is added to the
+current playlist."
+  (let* ((any-track (car (consult-emms--get-album-tracks album)))
+	 (genre (emms-track-get (gethash any-track emms-cache-db) 'info-genre)))
+    (consult-emms--choose-track-or-album-genre genre)))
+
 ;; NOTE This blatantly copies the structure of the above function, but
 ;; two uses really enough to justify abstracting it out.
 (defun consult-emms-embark--album-add-artist (album)
