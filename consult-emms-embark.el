@@ -33,6 +33,13 @@ Selected track is added to the current playlist."
   (let* ((artist (consult-emms--track-name-get track-name 'info-artist)))
     (consult-emms--choose-track-or-album-artist artist)))
 
+(defun consult-emms-embark--track-goto-genre (track-name)
+  "Select a track from the genre to which TRACK-NAME belongs.
+
+Selected track is added to the current playlist."
+  (let* ((genre (consult-emms--track-name-get track-name 'info-genre)))
+    (consult-emms--choose-track-or-album-genre genre)))
+
 (defun consult-emms-embark--track-add-album (track-name)
   "Add album to which TRACK-NAME belongs to current playlist."
   (let* ((album (consult-emms--track-name-get track-name 'info-album)))
