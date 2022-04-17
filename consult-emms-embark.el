@@ -215,6 +215,8 @@ Selected track is added to the current playlist."
 
 (add-to-list 'embark-keymap-alist '(playlist . consult-emms-embark-playlist-actions))
 
+;;;; Genre
+
 ;;;; Streams
 
 (defun consult-emms-embark--add-stream-playlist (stream-name)
