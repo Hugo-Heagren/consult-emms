@@ -161,6 +161,7 @@ tag, that value is used, otherwise use the value of `artist'."
   (let ((map (make-sparse-keymap)))
     (keymap-set map "a" '("Artist" . consult-emms-embark--album-goto-artist))
     (keymap-set map "b" '("Album" . consult-emms--choose-track-album))
+    (keymap-set map "g" '("Genre" . consult-emms-embark--album-goto-genre))
     map)
   "Keymap for actions moving from a track to an associated entity.")
 (fset 'consult-emms-embark-album-goto consult-emms-embark-album-goto)
