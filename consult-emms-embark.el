@@ -181,6 +181,7 @@ The first song in ALBUM is examined for its `genre' tag."
 (defvar consult-emms-embark-album-add
   (let ((map (make-sparse-keymap)))
     (keymap-set map "a" '("Artist" . consult-emms-embark--album-add-artist))
+    (keymap-set map "g" '("Genre" . consult-emms-embark--album-add-genre))
     map)
   "Keymap for actions queuing an album-associated entity.")
 (fset 'consult-emms-embark-album-add consult-emms-embark-album-add)
