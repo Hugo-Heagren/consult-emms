@@ -151,6 +151,18 @@ tag, that value is used, otherwise use the value of `artist'."
 		  (emms-track-get (gethash any-track emms-cache-db) 'info-artist))))
     (consult-emms--add-artist artist)))
 
+(defun consult-emms-embark--album-add-genre (album)
+  "Add all tracks of ALBUM's genre to current playlist.
+
+The first song in ALBUM is examined for its `genre' tag."
+  ;; Tracks in albums generally have the same genre, so just assume
+  ;; the first track is a good guide. If the user wants the genre of a
+  ;; SPECIFIC track, they can just navigate to that track and use the
+  ;; genre controls from there.
+  (let* ((any-track (car (consult-emms--get-album-tracks album)))
+	 (genre (emms-track-get (gethash any-track emms-cache-db) 'info-genre)))
+    (consult-emms--add-genre genre)))
+
 (embark-define-keymap consult-emms-embark-album-actions
   "Keymap for actions on albums in `consult-emms'."
   ("p" '("Add to playlist". consult-emms-embark--add-album-playlist))
