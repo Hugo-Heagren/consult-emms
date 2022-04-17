@@ -43,6 +43,11 @@ Selected track is added to the current playlist."
   (let* ((artist (consult-emms--track-name-get track-name 'info-artist)))
     (consult-emms--add-artist artist)))
 
+(defun consult-emms-embark--track-add-genre (track-name)
+  "Add TRACK-NAME's genre to current playlist."
+  (let* ((genre (consult-emms--track-name-get track-name 'info-genre)))
+    (consult-emms--add-genre genre)))
+
 (defun consult-emms-embark--edit-track-tags (track-name)
   "Edit TRACK-NAME's tags in EMMS' tag editor."
   (let* ((key (get-text-property 0 'consult-emms-track-key track-name))
