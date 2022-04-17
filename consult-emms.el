@@ -562,6 +562,7 @@ transformed with `buffer-name'."
 
 ;;;###autoload
 (defun consult-emms-library ()
+  "Select music from multiple sources (track, album, artist, etc.)"
   (interactive)
   (consult--multi consult-emms-library-sources
                  :require-match t
