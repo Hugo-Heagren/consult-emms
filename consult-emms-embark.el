@@ -127,9 +127,10 @@ Selected track is added to the current playlist."
 ;; NOTE This blatantly copies the structure of the above function, but
 ;; two uses really enough to justify abstracting it out.
 (defun consult-emms-embark--album-add-artist (album)
-  "Select a track by ALBUM's artist.
+  "Add all tracks by ALBUM's artist to current playlist.
 
-Selected track is added to the current playlist."
+The first song in ALBUM is examined. If it has an `albumartist'
+tag, that value is used, otherwise use the value of `artist'."
   ;; All the tracks will have the same album-artist, so we just check
   ;; the first one
   (let* ((any-track (car (consult-emms--get-album-tracks album)))
