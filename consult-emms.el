@@ -553,7 +553,6 @@ transformed with `buffer-name'."
   (let ((playlist-list (consult-emms--list-playlists)))
     (consult--read playlist-list
 		   :prompt "EMMS Playlist: "
-		   :require-match t
 		   :default (buffer-name emms-playlist-buffer)
 		   :category 'playlist
 		   :sort nil)))
