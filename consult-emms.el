@@ -514,7 +514,7 @@ of the tracks's line in BUFFER."
 (defun consult-emms--playlist (buffer)
   "Select a track from EMMS buffer BUFFER.
 
-BUFFER is a string, is the name of a buffer."
+BUFFER is a string, the name of a buffer."
   ;; `consult-emms--playlist-source-from-buffer' does most of the work
   ;; of forming the args for us, and it's a good idea to avoid code
   ;; duplication, so we use it here. BUT, it forms a source for
