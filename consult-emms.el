@@ -549,13 +549,20 @@ BUFFER is a string, the name of a buffer."
 
 Each candidate in the list is the name of a buffer. The list is
 fetched with `consult-emms--list-playlists', then
-transformed with `buffer-name'."
-  (let ((playlist-list (consult-emms--list-playlists)))
-    (consult--read playlist-list
-		   :prompt "EMMS Playlist: "
-		   :default (buffer-name emms-playlist-buffer)
-		   :category 'playlist
-		   :sort nil)))
+transformed with `buffer-name'.
+
+If a non-matching input is selected, create a buffer with that
+name (using `emms-playlist-new') and return that."
+  (let* ((playlist-list (consult-emms--list-playlists))
+	 (buf (consult--read playlist-list
+			     :prompt "EMMS Playlist: "
+			     :default (buffer-name emms-playlist-buffer)
+			     :category 'playlist
+			     :sort nil)))
+    ;; Buffer already exists, return it
+    (if (get-buffer buf) buf
+      ;; Named buffer doesn't already exist: create it
+      (emms-playlist-new buf))))
 
 ;;;; Entry Points
 
