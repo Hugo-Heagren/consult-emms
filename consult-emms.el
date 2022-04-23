@@ -590,9 +590,22 @@ name (using `emms-playlist-new') and return that."
 
 ;;;###autoload
 (defun consult-emms-metaplaylist ()
-  "Choose an EMMS playlist to interact with."
+  "Choose an EMMS playlist to interact with.
+
+If the playlist has some tracks in it, select a track. If empty,
+run `consult-emms-library' to add music, then make the playlist
+current (quitting `consult-emms-library' with \\[keyboard-quit]
+will stop the function before the new playlist is made current)."
   (interactive)
-  (consult-emms--playlist (consult-emms--choose-buffer)))
+  (let* ((buf (consult-emms--choose-buffer))
+	 (tracks (consult-emms--get-tracks-playlist-buffer buf)))
+    (if tracks
+	(consult-emms--playlist buf)
+      (consult-emms--with-current-playlist
+       buf (consult-emms-library))
+      ;; These lines are essentially a condensed version of
+      ;; `emms-playlist-set-playlist-buffer'
+      (emms-playlist-set-playlist-buffer buf))))
 
 ;;;###autoload
 (defun consult-emms-current-playlist ()
