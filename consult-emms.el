@@ -259,9 +259,9 @@ Tracknumbers are fetched with `consult-emms--guess-track-number'."
 
 Returns a list of keys in `emms-cache-db'. These are sorted by
 their track number, compared with
-`consult-emms--compare-track-numbers'."
+`consult-emms--sort-album-function'."
   (sort (gethash album consult-emms--album-cache)
-	'consult-emms--compare-track-numbers))
+	consult-emms--sort-album-function))
 
 (defun consult-emms--add-album (album)
   (mapcar (lambda (trk)
@@ -397,6 +397,13 @@ This is meant to be a sensible default for
   "Function for sorting tracks when retrieving a genre.
 
 Used by `consult-emms--get-genre-tracks'."
+  :group 'consult-emms
+  :type 'function)
+
+(defcustom consult-emms--sort-album-function #'consult-emms-sort-genre-album-number
+  "Function for sorting tracks when retrieving a album.
+
+Used by `consult-emms--get-album-tracks'."
   :group 'consult-emms
   :type 'function)
 
